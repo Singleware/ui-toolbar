@@ -3,15 +3,11 @@
  * This source code is licensed under the MIT License as described in the file LICENSE.
  */
 import * as Class from '@singleware/class';
-import * as Observable from '@singleware/observable';
 import * as DOM from '@singleware/jsx';
 import * as Control from '@singleware/ui-control';
 
 import { Properties } from './properties';
 import { Element } from './element';
-import { Group } from './group';
-import { Action } from './action';
-import { Events } from './events';
 
 /**
  * Toolbar template class.
@@ -27,25 +23,10 @@ export class Template extends Control.Component<Properties> {
   };
 
   /**
-   * Toolbar events.
-   */
-  @Class.Private()
-  private subjects: Events = {
-    activate: new Observable.Subject<Action>(),
-    deactivate: new Observable.Subject<Action>()
-  };
-
-  /**
-   * Toolbar groups.
-   */
-  @Class.Private()
-  private groups: Group = {};
-
-  /**
    * Buttons element.
    */
   @Class.Private()
-  private buttonSlot: HTMLSlotElement = <slot name="buttons" class="buttons" /> as HTMLSlotElement;
+  private buttonSlot: HTMLSlotElement = <slot name="button" class="button" /> as HTMLSlotElement;
 
   /**
    * Wrapper element.
@@ -95,100 +76,13 @@ export class Template extends Control.Component<Properties> {
   ) as ShadowRoot;
 
   /**
-   * Activates the specified button element.
-   * @param button Button element.
-   */
-  @Class.Private()
-  private activateButton(button: HTMLElement): void {
-    this.subjects.activate.notifyAll({ button: button });
-    button.classList.add('active');
-  }
-
-  /**
-   * Deactivates the specified button element.
-   * @param button Button element.
-   */
-  @Class.Private()
-  private deactivateButton(button: HTMLElement): void {
-    this.subjects.deactivate.notifyAll({ button: button });
-    button.classList.remove('active');
-  }
-
-  /**
-   * Toggles the specified button element.
-   * @param button Button element.
-   */
-  @Class.Private()
-  private toggleButton(button: HTMLElement): void {
-    if (button.classList.contains('active')) {
-      this.deactivateButton(button);
-    } else {
-      this.activateButton(button);
-    }
-  }
-
-  /**
-   * Activates the the specified button in your respective group.
-   * @param group Group name.
-   * @param toggle Determines whether the button can be toggled or not.
-   * @param button Button element.
-   * @returns Returns true when the button is activated or deactivated, false otherwise.
-   */
-  @Class.Private()
-  private activateButtonGroup(group: string, toggle: boolean, button: HTMLElement): boolean {
-    const current = this.groups[group];
-    if (current === button) {
-      if (!toggle) {
-        return false;
-      }
-      this.deactivateButton(current);
-      delete this.groups[group];
-    } else {
-      if (current) {
-        this.deactivateButton(current);
-      }
-      this.activateButton(button);
-      this.groups[group] = button;
-    }
-    return true;
-  }
-
-  /**
-   * Click event handler.
-   * @param event Event information.
-   */
-  @Class.Private()
-  private clickHandler(event: Event): void {
-    const newer = event.target as HTMLElement;
-    const toggle = newer.dataset.toggle === 'on';
-    if (newer.dataset.group) {
-      if (!this.activateButtonGroup(newer.dataset.group as string, toggle, newer)) {
-        event.preventDefault();
-        event.stopImmediatePropagation();
-      }
-    } else if (toggle) {
-      this.toggleButton(newer);
-    }
-  }
-
-  /**
-   * Bind event handlers to update the custom element.
-   */
-  @Class.Private()
-  private bindHandlers(): void {
-    this.skeleton.addEventListener('click', Class.bindCallback(this.clickHandler), true);
-  }
-
-  /**
    * Bind exposed properties to the custom element.
    */
   @Class.Private()
   private bindProperties(): void {
     Object.defineProperties(this.skeleton, {
-      events: super.bindDescriptor(Template.prototype, 'events'),
-      buttons: super.bindDescriptor(Template.prototype, 'buttons'),
-      disabled: super.bindDescriptor(Template.prototype, 'disabled'),
-      orientation: super.bindDescriptor(Template.prototype, 'orientation')
+      disabled: super.bindDescriptor(this, Template.prototype, 'disabled'),
+      orientation: super.bindDescriptor(this, Template.prototype, 'orientation')
     });
   }
 
@@ -208,25 +102,8 @@ export class Template extends Control.Component<Properties> {
    */
   constructor(properties?: Properties, children?: any[]) {
     super(properties, children);
-    this.bindHandlers();
     this.bindProperties();
     this.assignProperties();
-  }
-
-  /**
-   * Get available events.
-   */
-  @Class.Public()
-  public get events(): Events {
-    return this.subjects;
-  }
-
-  /**
-   * Get buttons list.
-   */
-  @Class.Public()
-  public get buttons(): HTMLElement[] {
-    return this.buttonSlot.assignedNodes() as HTMLElement[];
   }
 
   /**

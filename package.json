@@ -7,7 +7,7 @@
   "name": "@singleware/ui-toolbar",
   "description": "Singleware UI toolbar package.",
   "license": "MIT",
-  "version": "1.0.9",
+  "version": "1.0.11",
   "main": "release/source/index.js",
   "types": "release/types/index.d.ts",
   "keywords": [
@@ -25,10 +25,10 @@
     "node": ">=8"
   },
   "dependencies": {
-    "@singleware/class": "^1.0.13",
-    "@singleware/jsx": "^1.0.9",
-    "@singleware/observable": "^1.0.11",
-    "@singleware/ui-control": "^1.0.10"
+    "@singleware/class": "^1.1.9",
+    "@singleware/jsx": "^1.0.11",
+    "@singleware/observable": "^1.0.19",
+    "@singleware/ui-control": "^1.0.11"
   },
   "devDependencies": {
     "prettier": "^1.14.2",

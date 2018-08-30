@@ -5,4 +5,3 @@
 export { Template } from './template';
 export { Properties } from './properties';
 export { Element } from './element';
-export { Action } from './action';
