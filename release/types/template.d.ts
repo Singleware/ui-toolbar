@@ -26,10 +26,6 @@ export declare class Template extends Control.Component<Properties> {
      */
     private skeleton;
     /**
-     * Toolbar elements.
-     */
-    private elements;
-    /**
      * Bind exposed properties to the custom element.
      */
     private bindProperties;

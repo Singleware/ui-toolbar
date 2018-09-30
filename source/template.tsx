@@ -8,6 +8,7 @@ import * as Control from '@singleware/ui-control';
 
 import { Properties } from './properties';
 import { Element } from './element';
+import { States } from './states';
 
 /**
  * Toolbar template class.
@@ -20,35 +21,35 @@ export class Template extends Control.Component<Properties> {
   @Class.Private()
   private states = {
     disabled: false
-  };
+  } as States;
 
   /**
    * Buttons element.
    */
   @Class.Private()
-  private buttonSlot: HTMLSlotElement = <slot name="button" class="button" /> as HTMLSlotElement;
+  private buttonSlot = <slot name="button" class="button" /> as HTMLSlotElement;
 
   /**
    * Wrapper element.
    */
   @Class.Private()
-  private wrapper: HTMLElement = <div class="wrapper">{this.buttonSlot}</div> as HTMLElement;
+  private wrapper = <div class="wrapper">{this.buttonSlot}</div> as HTMLDivElement;
 
   /**
    * Toolbar styles.
    */
   @Class.Private()
-  private styles: HTMLStyleElement = (
+  private styles = (
     <style>
       {`:host > .wrapper {
   display: flex;
 }
 :host > .wrapper,
-:host > .wrapper[data-orientation='row'] {
+:host([data-orientation='row']) > .wrapper {
   flex-direction: row;
   width: inherit;
 }
-:host > .wrapper[data-orientation='column'] {
+:host([data-orientation='column']) > .wrapper {
   flex-direction: column;
   height: inherit;
 }`}
@@ -59,31 +60,18 @@ export class Template extends Control.Component<Properties> {
    * Toolbar skeleton.
    */
   @Class.Private()
-  private skeleton: Element = (
+  private skeleton = (
     <div slot={this.properties.slot} class={this.properties.class}>
       {this.children}
     </div>
   ) as Element;
 
   /**
-   * Toolbar elements.
-   */
-  @Class.Private()
-  private elements: ShadowRoot = DOM.append(
-    (this.skeleton as HTMLDivElement).attachShadow({ mode: 'closed' }),
-    this.styles,
-    this.wrapper
-  ) as ShadowRoot;
-
-  /**
    * Bind exposed properties to the custom element.
    */
   @Class.Private()
   private bindProperties(): void {
-    Object.defineProperties(this.skeleton, {
-      disabled: super.bindDescriptor(this, Template.prototype, 'disabled'),
-      orientation: super.bindDescriptor(this, Template.prototype, 'orientation')
-    });
+    this.bindComponentProperties(this.skeleton, ['disabled', 'orientation']);
   }
 
   /**
@@ -91,7 +79,7 @@ export class Template extends Control.Component<Properties> {
    */
   @Class.Private()
   private assignProperties(): void {
-    Control.assignProperties(this, this.properties, ['disabled']);
+    this.assignComponentProperties(this.properties, ['disabled']);
     this.orientation = this.properties.orientation || 'row';
   }
 
@@ -102,6 +90,7 @@ export class Template extends Control.Component<Properties> {
    */
   constructor(properties?: Properties, children?: any[]) {
     super(properties, children);
+    DOM.append(this.skeleton.attachShadow({ mode: 'closed' }), this.styles, this.wrapper);
     this.bindProperties();
     this.assignProperties();
   }
@@ -118,8 +107,7 @@ export class Template extends Control.Component<Properties> {
    * Set disabled state.
    */
   public set disabled(state: boolean) {
-    this.states.disabled = state;
-    Control.setChildrenProperty(this.buttonSlot, 'disabled', state);
+    Control.setChildrenProperty(this.buttonSlot, 'disabled', (this.states.disabled = state));
   }
 
   /**
@@ -127,14 +115,14 @@ export class Template extends Control.Component<Properties> {
    */
   @Class.Public()
   public get orientation(): string {
-    return this.wrapper.dataset.orientation || 'row';
+    return this.skeleton.dataset.orientation || 'row';
   }
 
   /**
    * Set orientation mode.
    */
   public set orientation(mode: string) {
-    this.wrapper.dataset.orientation = mode;
+    this.skeleton.dataset.orientation = mode;
   }
 
   /**
