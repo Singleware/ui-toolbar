@@ -7,7 +7,7 @@
   "name": "@singleware/ui-toolbar",
   "description": "Singleware UI toolbar package.",
   "license": "MIT",
-  "version": "1.0.15",
+  "version": "1.0.18",
   "main": "release/source/index.js",
   "types": "release/types/index.d.ts",
   "keywords": [
@@ -21,17 +21,13 @@
     "type": "git",
     "url": "https://github.com/singleware/ui-toolbar"
   },
-  "engines": {
-    "node": ">=8"
-  },
   "dependencies": {
-    "@singleware/class": "^1.1.12",
-    "@singleware/jsx": "^1.0.12",
-    "@singleware/observable": "^1.0.19",
-    "@singleware/ui-control": "^1.1.2"
+    "@singleware/class": "^1.1.19",
+    "@singleware/jsx": "^1.0.20",
+    "@singleware/ui-control": "^1.1.10"
   },
   "devDependencies": {
-    "prettier": "^1.14.3",
+    "prettier": "^1.16.4",
     "typescript": "^2.9.2"
   },
   "prettier": {
@@ -42,7 +38,7 @@
   },
   "scripts": {
     "build": "npm run make && npm run update",
-    "make": "tsc",
+    "make": "npx tsc -p ./source",
     "update": "cp -Rf ./source/*.d.ts ./release/types"
   }
 }

@@ -47,6 +47,7 @@ export class Template extends Control.Component<Properties> {
 :host > .wrapper,
 :host([data-orientation='row']) > .wrapper {
   flex-direction: row;
+  align-items: center;
   width: inherit;
 }
 :host([data-orientation='column']) > .wrapper {
